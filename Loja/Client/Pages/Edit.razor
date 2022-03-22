@@ -1,0 +1,138 @@
+﻿@page "/product/{id:int}/edit"
+@inject HttpClient Http
+@inject IProductService ProductService
+@inject ICategoryService CategoryService
+@inject IBrandService BrandService
+@inject ITaxService TaxService
+@inject NavigationManager NavigationManager
+
+<h3>@_product.ProductName <span class="badge bg-primary">Edit</span></h3>
+
+<div class="container">
+	<div class="row g-5 justify-content-md-center">
+		<EditForm Model="@_product" OnSubmit="UpdateProduct">
+			<DataAnnotationsValidator />
+			<div class="row col-4">
+				<label for="Id" class="col-sm-4 col-form-label">ID</label>
+				<div class="col-sm-7">
+					<InputNumber class="form-control form-control-sm" id="Id" @bind-Value="@_product.Id" disabled/><br/>
+					<ValidationMessage For="@(() => @_product.Id)"/>
+				</div>
+			</div>
+			<div class="row col-4">
+				<label for="ProductName" class="col-sm-4 col-form-label">Product Name</label>
+				<div class="col-sm-7">
+					<InputText class="form-control form-control-sm" id="ProductName" @bind-Value="@_product.ProductName"/><br/>
+					<ValidationMessage For="@(() => @_product.ProductName)"/>
+				</div>
+			</div>
+			<div class="row col-4">
+				<label for="Barcode" class="col-sm-4 col-form-label">Barcode</label>
+				<div class="col-sm-7">
+					<InputNumber class="form-control form-control-sm" id="Barcode" @bind-Value="@_product.Barcode"/><br/>
+					<ValidationMessage For="@(() => @_product.Barcode)"/>
+				</div>
+			</div>
+			<div class="row col-4">
+				<label for="Stock" class="col-sm-4 col-form-label">Stock</label>
+				<div class="col-sm-7">
+					<InputNumber class="form-control form-control-sm" id="Stock" @bind-Value="@_product.Stock"/><br/>
+					<ValidationMessage For="@(() => @_product.Stock)"/>
+				</div>
+			</div>
+			<div class="row col-4">
+				<label for="CategoryId" class="col-sm-4 col-form-label">Category</label>
+				<div class="col-sm-7">
+					<InputSelect class="form-select form-select-sm" id="CategoryId" @bind-Value="_product.CategoryId">
+						@foreach (var categories in _categories)
+						{
+							<option value="@categories.Id">@categories.CategoryName</option>
+						}
+					</InputSelect><br/>
+					<ValidationMessage For="@(() => @_product.CategoryId)"/>
+				</div>
+			</div>
+			<div class="row col-4">
+				<label for="BrandId" class="col-sm-4 col-form-label">Brand</label>
+				<div class="col-sm-7">
+					<InputSelect class="form-select form-select-sm" id="BrandId" @bind-Value="_product.BrandId">
+						@foreach (var brands in _brands)
+						{
+							<option value="@brands.Id">@brands.BrandName</option>
+						}
+					</InputSelect><br/>
+					<ValidationMessage For="@(() => @_product.BrandId)"/>
+				</div>
+			</div>
+			<div class="row col-4">
+				<label for="TaxId" class="col-sm-4 col-form-label">Tax</label>
+				<div class="col-sm-7">
+					<InputSelect class="form-select form-select-sm" id="TaxId" @bind-Value="_product.TaxId">
+						@foreach (var taxes in _taxes)
+						{
+							<option value="@taxes.Id">@taxes.TaxPercent</option>
+						}
+					</InputSelect><br/>
+					<ValidationMessage For="@(() => @_product.TaxId)"/>
+				</div>
+			</div>
+			<div class="">
+				<button type="submit" class="btn btn-primary">Apply</button>
+			</div>
+		</EditForm>
+	</div>
+</div>
+@code {
+	private Product _product;
+	private List<Category> _categories = new List<Category>();
+	private List<Brand> _brands = new List<Brand>();
+	private List<Tax> _taxes = new List<Tax>();
+	[Parameter]
+	public int id { get; set; }
+	private string message = string.Empty;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		message = "Loading product...";
+
+		var result = await ProductService.GetProduct(id);
+		if (!result.Success)
+		{
+			message = result.Message;
+		}
+		else
+		{
+			result.Success = true;
+			_product = result.Data;
+		}
+		if (result.Success)
+		{
+			message = result.Message;
+		}
+		else
+		{
+			_product = result.Data;
+		}
+		var resultC = await CategoryService.GetCategories();
+		_categories = resultC;
+		var resultB = await BrandService.GetBrands();
+		_brands = resultB;
+		var resultT = await TaxService.GetTaxes();
+		_taxes = resultT;
+	}
+	protected override async Task OnInitializedAsync()
+	{
+		//var resultC = await CategoryService.GetCategories();
+		//_categories = resultC;
+		//var resultB = await BrandService.GetBrands();
+		//_brands = resultB;
+		//var resultT = await TaxService.GetTaxes();
+		//_taxes = resultT;
+	}
+
+	async Task UpdateProduct()
+	{
+		var result = await ProductService.SetProduct(_product);
+		NavigationManager.NavigateTo("/product/all");
+	}
+}
