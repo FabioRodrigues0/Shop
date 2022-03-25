@@ -1,0 +1,65 @@
+﻿@page "/product/all"
+@using Shop.Shared
+@inject HttpClient _http
+@inject IProductService ProductService
+@inject ICategoryService CategoryService
+@inject IBrandService BrandService
+@inject ITaxService TaxService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Products List</PageTitle>
+
+<h3>Products List</h3>
+
+<p>This component demonstrates a Product List fetched from the server.</p>
+
+<table class="table table-striped table-hover">
+	<thead>
+	<tr>
+		<th>ID</th>
+		<th>Product Name</th>
+		<th>Barcode</th>
+		<th>Category</th>
+		<th>Brand</th>
+		<th>Price</th>
+		<th>Stock</th>
+		<th>TAX</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var product in _products)
+	{
+		<tr>
+			<td class="align-middle">@product.Id</td>
+			<td>@product.ProductName</td>
+			<td>@product.Barcode</td>
+			<td>@product.Category</td>
+			<td>@product.Brand</td>
+			<td>@product.Price</td>
+			<td>@product.Stock</td>
+			<td>@product.Tax</td>
+			<td>
+				<BSButton Color="BSColor.Primary" Target="productModal" class="btn-sm oi oi-pencil" OnClick="() => Id = product.Id"/>
+			</td>
+		</tr>
+	}
+	</tbody>
+</table>
+<BSModal DataId="productModal">
+	<Content><Edit Id="2"/></Content>
+	<Footer Context="modal">
+		<BSButton MarginStart="Margins.Auto" Color="BSColor.Secondary" @onclick="modal.HideAsync">Close</BSButton>
+	</Footer>
+</BSModal>
+@code {
+	private List<ProductsView> _products = new List<ProductsView>();
+	[Parameter]
+	public int Id { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await ProductService.GetProductsView();
+		_products = result;
+	}
+}

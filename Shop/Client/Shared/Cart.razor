@@ -1,0 +1,41 @@
+﻿@page "/cart"
+@inject IProductService ProductService
+
+<h3>Cart</h3>
+
+<div class="container modal-header"><h4>Cart</h4> </div>
+<div class="container-fluid modal-body">
+	@foreach (var product in _products)
+	{
+		<div>
+			<img class="rounded float-start productImage-cart" src="@product.ImageUrl" alt="@product.ProductName"/>
+			<ul class="list-unstyled mt-3 mb-4">
+				<li>
+					<h3 class="card-title pricing-card-title">
+						@if (@product.Descont > 0)
+						{
+							<b class="price-final">€ @product.PriceFinal </b><s class="price-old"> @product.Price</s>
+						}
+						else
+						{
+							<span>€ @product.Price</span>
+						}
+					</h3></li>
+				<li><h5 class="my-0 fw-normal">@product.ProductName</h5></li>
+				<li>@product.Brand</li>
+				<li>@product.Descont</li>
+			</ul>
+			<text></text><button class="btn-sm oi oi-basket"></button>
+		</div>
+	}
+</div>
+
+@code {
+	private List<ProductsView> _products = new List<ProductsView>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await ProductService.GetProductsView();
+		_products = result;
+	}
+}
