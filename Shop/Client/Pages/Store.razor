@@ -1,0 +1,46 @@
+﻿@page "/store"
+@using System.Reflection.Metadata.Ecma335
+@inject HttpClient Http
+@inject IProductService ProductService
+<h3>Shop</h3>
+<div class="row row-cols-auto row-cols-md-auto mb-auto justify-content-center">
+	@foreach(var product in _products)
+	{
+		<div class="card m-1 rounded-3 shadow-sm">
+			<div class="py-2">
+				<img class="rounded float-start productImage" src="@product.ImageUrl" alt="@product.ProductName" />
+			</div>
+			<div class="card-body">
+				<ul class="list-unstyled mt-3 mb-4">
+					<li>
+						<h3 class="card-title pricing-card-title">
+							@if(@product.Descont > 0)
+							{
+								<b class="price-final">€ @product.PriceFinal </b>
+
+								<s class="price-old"> @product.Price</s>
+							}
+							else
+							{
+								<span>€ @product.Price</span>
+							}
+						</h3>
+					</li>
+					<li><h5 class="my-0 fw-normal">@product.ProductName</h5></li>
+					<li>@product.Brand</li>
+					<li>@product.Descont</li>
+				</ul>
+				<button type="button" class="w-100 btn btn-lg btn-outline-primary">Buy</button>
+			</div>
+		</div>
+	}
+</div>
+@code {
+	private List<ProductsView> _products = new List<ProductsView>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		var result = await ProductService.GetProductsView();
+		_products = result;
+	}
+}

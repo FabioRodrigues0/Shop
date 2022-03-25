@@ -1,0 +1,39 @@
+﻿<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <div class="container">
+        <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li>
+                    <NavLink class="nav-link link-dark" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink class="nav-link link-dark" href="store">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Shop
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink class="nav-link link-dark" href="product/all">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Products List
+                    </NavLink>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-light" type="submit">Search</button>
+            </form>
+            <button type="button" class="btn btn-outline-dark me-2 m-2">Login</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

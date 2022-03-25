@@ -1,0 +1,11 @@
+﻿.productImage {
+	width: 200px;
+	height: auto;
+}
+.price-final {
+	color: red;
+}
+.price-old {
+	color: red;
+	font-size: small;
+}
